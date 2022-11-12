@@ -9,18 +9,18 @@ server.use(cors());
 //usamos el middleware de express.json para poder leer los datos que nos envian en el body
 server.use(express.json());
 //ponemos el puerto en una constante
-const PORT=3000;
+const PORT=process.env.PORT;
 //creamos un array de objetos para simular una base de datos
 let platillos =[
-    {nombre:'Tacos', precio:50},
+    {nombre:'chocolates', precio:50},
     {nombre:"mole", precio:100},
 ];
 
 //verbos http
 //get obtener datos
 //post crear datos o realizar un proceso en servidor
-//put
-//delete
+//put actualizar datos
+//delete eliminar datos
 //creando endpoint principal
 server.get("/",(request,response)=>{
     response.send("API v1.01");
@@ -29,7 +29,10 @@ server.get("/platillos",(request,response)=>{
    // response.send(platillos);
     response.json(
     {
-        data:platillos,
+        //data:platillos,
+        data:platillos.map((platillo, index)=>{
+            return {index,...platillo};
+        }),
         count:platillos.length,
         mensaje:"platillos obtenidos correctamente"
     }
@@ -53,7 +56,36 @@ server.post("/platillos",(request,response)=>{
 
     //una funcion de flecha que accede a un req o res es una middleware
 });
+server.put("/platillos:index",(request,response)=>{
+    const {index}=request.params;
+    const platillo=request.body;
+    platillos[index]=platillo;
+   // response.send(platillos);
+   //como lo agrego al array ?
+    response.json(
+    {
+        data:platillo,
+       mensaje:"entro a la funcion de agregar platillos"
+    }
+    );
+
+    //una funcion de flecha que accede a un req o res es una middleware
+});
+server.delete("/platillos:index",(request,response)=>{
+    const {index}=request.params;
+     // sacaremos el  indice el parametro de la url
+ platillos.splice(index,1);
+   //eliminaremos el elemento del array
+    response.json(
+    {
+        data:platillo,
+       mensaje:"entro a la funcion de agregar platillos"
+    }
+    );
+
+    //una funcion de flecha que accede a un req o res es una middleware
+});
 //iniciamos el servidor de express
 server.listen(PORT,()=>{
-    console.log("servidor iniciado en el puerto 3000");
+    console.log("se elimino correctamente");
 });
